@@ -5,3 +5,4 @@ catvsdog/saved_model/
 Alexnet/flower_photos/flower_photos/
 Alexnet/flower_data/
 Alexnet/Alexnet_model.pth
+Alexnet/save_weights/myAlex100%.weights.h5
