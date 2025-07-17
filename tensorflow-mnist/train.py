@@ -34,7 +34,7 @@ callbacks = [
 ]
 
 # train the model
-model.fit(train_ds, epochs=20, validation_data=test_ds, callbacks=callbacks)
+model.fit(train_ds, epochs=10, validation_data=test_ds, callbacks=callbacks)
 
 # evaluate the model on the test set
 model.evaluate(test_ds)

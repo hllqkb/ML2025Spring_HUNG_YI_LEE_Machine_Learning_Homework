@@ -1,5 +1,8 @@
 from tensorflow.keras.layers import Dense, Flatten, Conv2D, MaxPooling2D
 from tensorflow.keras import Model
+import tensorflow as tf
+from tensorflow import keras
+@tf.keras.utils.register_keras_serializable()
 class MyModel(Model):
     def __init__(self):
         super(MyModel, self).__init__() # 直接调用父类的构造函数

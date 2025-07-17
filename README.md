@@ -1,3 +1,5 @@
+# Dive into Deep Learning
+
 Lay a solid foundation, learn from the basics, and make high-value choices
 
 Choice is the key to success but rather than being overly focused on one choice, we should be open to exploring multiple options and making informed decisions.
