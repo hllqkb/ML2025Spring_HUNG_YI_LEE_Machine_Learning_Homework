@@ -1,4 +1,5 @@
 # Dive into Deep Learning
+I have written a book to record my learning process in deep learning. The book is available for free on the Internet. You can read it online or download it for offline reading.
 
 Lay a solid foundation, learn from the basics, and make high-value choices
 
