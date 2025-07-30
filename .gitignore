@@ -9,3 +9,4 @@ Alexnet/save_weights/myAlex100%.weights.h5
 GoogleLeNet/googleNet.pth
 Resnet/resnet34-pre.pth
 Resnet/resNet34.pth
+faster-rcnn/VOCdevkit/
