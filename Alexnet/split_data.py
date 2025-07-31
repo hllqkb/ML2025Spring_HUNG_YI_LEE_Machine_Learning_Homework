@@ -1,67 +1,55 @@
 import os
 from shutil import copy, rmtree
 import random
-
-
-def mk_file(file_path: str):
-    if os.path.exists(file_path):
-        # 如果文件夹存在，则先删除原文件夹在重新创建
-        rmtree(file_path)
-    os.makedirs(file_path)
-
+from tqdm import tqdm
 
 def main():
-    # 保证随机可复现
+    '''
+    split_rate  : 测试集划分比例
+    init_dataset: 未划分前的数据集路径
+    new_dataset : 划分后的数据集路径
+    
+    '''
+    def makedir(path):
+        if os.path.exists(path):
+            rmtree(path)
+        os.makedirs(path)
+    
+    split_rate = 0.2
+    init_dataset = '/home/hllqk/projects/dive-into-deep-learning/Alexnet/flower_data/flower_photos'
+    new_dataset = 'datasets'
     random.seed(0)
 
-    # 将数据集中10%的数据划分到验证集中
-    split_rate = 0.1
+    classes_name = [name for name in os.listdir(init_dataset)]
 
-    # 指向你解压后的flower_photos文件夹
-    cwd = os.getcwd()
-    data_root = os.path.join(cwd, "flower_data")
-    origin_flower_path = os.path.join(data_root, "flower_photos")
-    assert os.path.exists(origin_flower_path), "path '{}' does not exist.".format(origin_flower_path)
+    makedir(new_dataset)
+    training_set = os.path.join(new_dataset, "train")
+    test_set = os.path.join(new_dataset, "test")
+    makedir(training_set)
+    makedir(test_set)
+    
+    for cla in classes_name:
+        makedir(os.path.join(training_set, cla))
+        makedir(os.path.join(test_set, cla))
 
-    flower_class = [cla for cla in os.listdir(origin_flower_path)
-                    if os.path.isdir(os.path.join(origin_flower_path, cla))]
-
-    # 建立保存训练集的文件夹
-    train_root = os.path.join(data_root, "train")
-    mk_file(train_root)
-    for cla in flower_class:
-        # 建立每个类别对应的文件夹
-        mk_file(os.path.join(train_root, cla))
-
-    # 建立保存验证集的文件夹
-    val_root = os.path.join(data_root, "val")
-    mk_file(val_root)
-    for cla in flower_class:
-        # 建立每个类别对应的文件夹
-        mk_file(os.path.join(val_root, cla))
-
-    for cla in flower_class:
-        cla_path = os.path.join(origin_flower_path, cla)
-        images = os.listdir(cla_path)
-        num = len(images)
-        # 随机采样验证集的索引
-        eval_index = random.sample(images, k=int(num*split_rate))
-        for index, image in enumerate(images):
-            if image in eval_index:
-                # 将分配至验证集中的文件复制到相应目录
-                image_path = os.path.join(cla_path, image)
-                new_path = os.path.join(val_root, cla)
-                copy(image_path, new_path)
-            else:
-                # 将分配至训练集中的文件复制到相应目录
-                image_path = os.path.join(cla_path, image)
-                new_path = os.path.join(train_root, cla)
-                copy(image_path, new_path)
-            print("\r[{}] processing [{}/{}]".format(cla, index+1, num), end="")  # processing bar
+    
+    for cla in classes_name:
+        class_path = os.path.join(init_dataset, cla)
+        img_set = os.listdir(class_path)
+        num = len(img_set)
+        test_set_index = random.sample(img_set, k=int(num*split_rate))
+        with tqdm(total=num,desc=f'Class : ' + cla, mininterval=0.3) as pbar:
+            for _, img in enumerate(img_set):
+                if img in test_set_index:
+                    init_img = os.path.join(class_path, img)
+                    new_img = os.path.join(test_set, cla)
+                    copy(init_img, new_img)
+                else:
+                    init_img = os.path.join(class_path, img)
+                    new_img = os.path.join(training_set, cla)
+                    copy(init_img, new_img)
+                pbar.update(1)
         print()
-
-    print("processing done!")
-
 
 if __name__ == '__main__':
     main()

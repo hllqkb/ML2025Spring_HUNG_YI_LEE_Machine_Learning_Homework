@@ -10,3 +10,12 @@ GoogleLeNet/googleNet.pth
 Resnet/resnet34-pre.pth
 Resnet/resNet34.pth
 faster-rcnn/VOCdevkit/
+Bubbliiiing-yolov3/VOCdevkit/
+Bubbliiiing-yolov3/map_out/
+*.pyc
+*.pth
+*.png
+Bubbliiiing-yolov3/2007_train.txt
+.gitignore
+Bubbliiiing-yolov3/2007_val.txt
+Bubbliiiing-yolov3/logs/
