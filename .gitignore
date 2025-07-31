@@ -19,3 +19,5 @@ Bubbliiiing-yolov3/2007_train.txt
 .gitignore
 Bubbliiiing-yolov3/2007_val.txt
 Bubbliiiing-yolov3/logs/
+yolov4-pytorch/2007_val.txt
+yolov4-pytorch/2007_train.txt
