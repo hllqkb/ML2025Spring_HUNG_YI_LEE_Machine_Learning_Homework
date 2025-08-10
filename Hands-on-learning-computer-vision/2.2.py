@@ -21,34 +21,31 @@ class conv_2d():
         return c
 
     def plot(self):
-        a, b, ax, ay, bx, by = self.a, self.b, self.ax, self.ay, self.bx, self.by
+        a = self.a
+        b = self.b
         c = self.conv()
-        cx = [i for i in range(c.shape[0])]
-        cy = [i for i in range(c.shape[1])]
-        
-        # 设置画布 1行3列
         plt.figure(figsize=(12, 4))
-        
         # 输入图像
         plt.subplot(1, 3, 1)
         plt.title('Input')
-        sns.heatmap(a, annot=False, cmap='Reds', xticklabels=ax, yticklabels=ay)
-        
+        # 灰度图
+        plt.imshow(a, cmap='gray')
+        plt.axis('off')
         # 卷积核
         plt.subplot(1, 3, 2)
         plt.title('Kernel')
-        sns.heatmap(b, annot=False, cmap='Greens', xticklabels=bx, yticklabels=by)
-        
+        sns.heatmap(b, annot=False, cmap='Greens', cbar=False)
+        plt.axis('off')
         # 输出图像
         plt.subplot(1, 3, 3)
         plt.title('Output')
-        sns.heatmap(c, annot=False, cmap='Blues', xticklabels=cx, yticklabels=cy)
-        
+        plt.imshow(c, cmap='gray')
+        plt.axis('off')
         plt.tight_layout()
         plt.show()
         
 # 冲击信号
-img=cv2.imread('lenna.jpg') # 计算机视觉最经典的一张图片Lenna
+img=cv2.imread('lenna.jpg',cv2.IMREAD_GRAYSCALE) # 计算机视觉最经典的一张图片Lenna
 # 二维冲击卷积核
 # 这个卷积核的效果是：
 # 输出图像中的每个像素将是输入图像中对应位置像素的精确复制
@@ -57,10 +54,13 @@ img=cv2.imread('lenna.jpg') # 计算机视觉最经典的一张图片Lenna
 size=15
 # 创建了一个15×15的全零矩阵k1
 k1=np.zeros((size,size))
+# 因为二维的核函数的大小是n*n的，因此在实现方波信号时我们需要除以(size*size)
+k2=np.ones((size,size))/size** 2
 # 计算中间位置mid = (15-1)//2 = 7
 mid=(size-1)//2
 # 在中间位置设置为1
 k1[mid,mid]=1
 # 计算卷积并绘图
-cov = conv_2d(img, k1)
+# cov = conv_2d(img, k1)
+cov = conv_2d(img, k2)
 cov.plot()
