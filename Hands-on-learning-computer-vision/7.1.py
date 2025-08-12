@@ -1,28 +1,23 @@
 import cv2
-import numpy as np
-import matplotlib.pyplot as plt
+import time
+from matplotlib import pyplot as plt
+image1=cv2.imread('image1.jpg')
+#  计算特征点提取&生成描述时间
+start = time.time()
+sift = cv2.xfeatures2d.SIFT_create()
+#  使用SIFT查找关键点key points和描述符descriptors
+kp1, des1 = sift.detectAndCompute(image1, None)
+kp2, des2 = sift.detectAndCompute(image2, None)
+end = time.time()
+print("特征点提取&生成描述运行时间:%.2f秒"%(end-start))
 
-def extract_sift_features(image_path):
-    # 读取图像
-    img = cv2.imread(image_path)
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    
-    # 初始化SIFT检测器
-    sift = cv2.SIFT_create()
-    
-    # 检测关键点和描述符
-    keypoints, descriptors = sift.detectAndCompute(gray, None)
-    
-    # 绘制关键点
-    img_with_keypoints = cv2.drawKeypoints(gray, keypoints, img)
-    
-    return keypoints, descriptors, img_with_keypoints
+kp_image1 = cv2.drawKeypoints(image1, kp1, None)
+kp_image2 = cv2.drawKeypoints(image2, kp2, None)
 
-# 使用示例
-image_path = 'example.jpg'
-keypoints, descriptors, result_img = extract_sift_features(image_path)
+plt.figure()
+plt.imshow(kp_image1)
+plt.savefig('kp_image1.png', dpi = 300)
 
-# 显示结果
-plt.imshow(cv2.cvtColor(result_img, cv2.COLOR_BGR2RGB))
-plt.title(f'Detected {len(keypoints)} SIFT keypoints')
-plt.show()
+plt.figure()
+plt.imshow(kp_image2)
+plt.savefig('kp_image2.png', dpi = 300)
