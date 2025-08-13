@@ -24,3 +24,4 @@ yolov4-pytorch/2007_train.txt
 YOLOv8-main/dataset/
 *.jpg
 *.ckpt
+*.jpeg
