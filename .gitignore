@@ -25,3 +25,5 @@ YOLOv8-main/dataset/
 *.jpg
 *.ckpt
 *.jpeg
+Hands-on-learning-computer-vision/caltech-101/
+Hands-on-learning-computer-vision/VOCdevkit/
