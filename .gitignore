@@ -46,3 +46,6 @@ AI-Guide-and-Demos-zh_CN/medium.pt
 AI-Guide-and-Demos-zh_CN/audio.mp3
 AI-Guide-and-Demos-zh_CN/Mistral-7B-Instruct-v0.3-Q4_K_M.gguf
 AI-Guide-and-Demos-zh_CN/Mistral-7B-Instruct-v0.3-Q4_K_M.gguf:Zone.Identifier
+AI-Guide-and-Demos-zh_CN/faiss_index/index.pkl
+AI-Guide-and-Demos-zh_CN/faiss_index/index.faiss
+AI-Guide-and-Demos-zh_CN/pip_conf.py
