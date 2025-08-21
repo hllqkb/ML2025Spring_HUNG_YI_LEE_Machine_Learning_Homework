@@ -1,72 +1,82 @@
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV
 from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error
+import os
 
-# Load the data
-train_path = "/home/hllqk/projects/ML2025spring-hw/ML2025Spring-hw2/ML2025Spring-hw2-public/train.csv"
-test_path = "/home/hllqk/projects/ML2025spring-hw/ML2025Spring-hw2/ML2025Spring-hw2-public/test.csv"
+# Load data
+data_dir = '/home/hllqk/projects/ML2025spring-hw/ML2025Spring-hw2/ML2025Spring-hw2-public'
+train_df = pd.read_csv(os.path.join(data_dir, 'train.csv'))
+test_df = pd.read_csv(os.path.join(data_dir, 'test.csv'))
 
-train_df = pd.read_csv(train_path)
-test_df = pd.read_csv(test_path)
+# Data Analysis
+print(train_df.info())
+print(train_df.describe())
+
+# Feature Selection
+# Drop columns not needed for prediction
+features_to_drop = ['id', 'cli_day3', 'ili_day3', 'wnohh_cmnty_cli_day3', 'wbelief_masking_effective_day3',
+                    'wbelief_distancing_effective_day3', 'wcovid_vaccinated_friends_day3', 'wlarge_event_indoors_day3',
+                    'wothers_masked_public_day3', 'wothers_distanced_public_day3', 'wshop_indoors_day3',
+                    'wrestaurant_indoors_day3', 'wworried_catch_covid_day3', 'hh_cmnty_cli_day3', 'nohh_cmnty_cli_day3',
+                    'wearing_mask_7d_day3', 'public_transit_day3', 'worried_finances_day3']
+X = train_df.drop(columns=features_to_drop + ['tested_positive_day3'])
+y = train_df['tested_positive_day3']
+
+# Split data into training and validation sets
+X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # Preprocessing
-# Drop the 'id' column as it's not needed for prediction
-X_train = train_df.drop(columns=['id', 'tested_positive_day3'])
-y_train = train_df['tested_positive_day3']
+numeric_features = X.select_dtypes(include=['int64', 'float64']).columns
+categorical_features = X.select_dtypes(include=['object']).columns
 
-# Select numerical and categorical columns
-numerical_cols = X_train.select_dtypes(include=['int64', 'float64']).columns.tolist()
-categorical_cols = X_train.select_dtypes(include=['object']).columns.tolist()
+numeric_transformer = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='mean')),
+    ('scaler', StandardScaler())])
 
-# Preprocessing for numerical data: Impute missing values
-numerical_transformer = SimpleImputer(strategy='mean')
-
-# Preprocessing for categorical data: Impute missing values and apply one-hot encoding
 categorical_transformer = Pipeline(steps=[
     ('imputer', SimpleImputer(strategy='most_frequent')),
-    ('onehot', OneHotEncoder(handle_unknown='ignore'))
-])
+    ('onehot', OneHotEncoder(handle_unknown='ignore'))])
 
-# Bundle preprocessing for numerical and categorical data
 preprocessor = ColumnTransformer(
     transformers=[
-        ('num', numerical_transformer, numerical_cols),
-        ('cat', categorical_transformer, categorical_cols)
-    ])
+        ('num', numeric_transformer, numeric_features),
+        ('cat', categorical_transformer, categorical_features)])
 
-# Define the model
-model = RandomForestRegressor(n_estimators=100, random_state=42)
+# Model Pipeline
+model = Pipeline(steps=[('preprocessor', preprocessor),
+                        ('regressor', RandomForestRegressor(random_state=42))])
 
-# Create a pipeline that combines the preprocessor and the model
-pipeline = Pipeline(steps=[('preprocessor', preprocessor),
-                           ('model', model)])
+# Hyperparameter Tuning
+param_grid = {
+    'regressor__n_estimators': [100, 200],
+    'regressor__max_depth': [None, 10, 20],
+    'regressor__min_samples_split': [2, 5]
+}
 
-# Split the training data into training and validation sets
-X_train_split, X_val_split, y_train_split, y_val_split = train_test_split(X_train, y_train, test_size=0.2, random_state=42)
+grid_search = GridSearchCV(model, param_grid, cv=3, scoring='neg_mean_squared_error', n_jobs=-1)
+grid_search.fit(X_train, y_train)
 
-# Train the model
-pipeline.fit(X_train_split, y_train_split)
+best_model = grid_search.best_estimator_
 
-# Evaluate the model on the validation set
-y_pred_val = pipeline.predict(X_val_split)
-mse_val = mean_squared_error(y_val_split, y_pred_val)
-print(f"Validation MSE: {mse_val}")
+# Evaluation
+y_pred_val = best_model.predict(X_val)
+mse = mean_squared_error(y_val, y_pred_val)
+print(f'Validation MSE: {mse}')
 
-# Make predictions on the test set
+# Prediction on Test Set
 X_test = test_df.drop(columns=['id'])
-y_pred_test = pipeline.predict(X_test)
+predictions = best_model.predict(X_test)
 
-# Prepare the submission file
+# Save Predictions
 submission_df = pd.DataFrame({
     'id': test_df['id'],
-    'tested_positive_day3': y_pred_test
+    'tested_positive_day3': predictions
 })
 
-# Save the predictions to a CSV file
 submission_df.to_csv('./content/submission.csv', index=False)
