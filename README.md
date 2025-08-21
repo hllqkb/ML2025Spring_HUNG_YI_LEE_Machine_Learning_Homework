@@ -6,7 +6,8 @@
 
 HW01：
 添加到kaggle运行，kaggle重启内容不是按factory reset重启，点击右上角的 ┇（更多选项按钮） -> 重启并清空输出，然后再运行代码。否则无法保存依赖环境
-
+HW02:
+用git clone的aideml的web和终端跑用远程model跑一堆问题，不建议使用，除非你有openai订阅
 
 克隆仓库
 
