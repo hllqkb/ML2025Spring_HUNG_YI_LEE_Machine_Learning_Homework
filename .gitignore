@@ -16,7 +16,6 @@ Bubbliiiing-yolov3/map_out/
 *.pth
 *.png
 Bubbliiiing-yolov3/2007_train.txt
-.gitignore
 Bubbliiiing-yolov3/2007_val.txt
 Bubbliiiing-yolov3/logs/
 yolov4-pytorch/2007_val.txt
@@ -50,3 +49,6 @@ AI-Guide-and-Demos-zh_CN/faiss_index/index.pkl
 AI-Guide-and-Demos-zh_CN/faiss_index/index.faiss
 AI-Guide-and-Demos-zh_CN/pip_conf.py
 AI-Guide-and-Demos-zh_CN/【源代码】深度学习入门：基于Python的理论与实现_20240716/data/
+d2l/augument/data/cifar-10-batches-py/
+d2l/fine-tuning/data/hotdog.zip
+d2l/augument/main.ipynb
